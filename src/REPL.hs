@@ -1,5 +1,6 @@
 module REPL
     ( repl
+    , exit
     ) where
 
 import System.Console.Readline
@@ -30,6 +31,9 @@ ep tab mode str = do
     liftIO $ case mres of
         ([], Just term) -> putStrLn $ render $ ppTerm $ first syntax (nf mode term)
         (errs, _)       -> mapM_ (hPutStrLn stderr . erender . errorMsg) errs
+
+exit :: ScopeT IO ()
+exit = liftIO exitSuccess
 
 processCmd :: [(Name,Fixity)] -> String -> String -> ScopeT IO ()
 processCmd _ "quit" _   = liftIO exitSuccess

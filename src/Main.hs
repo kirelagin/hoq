@@ -11,4 +11,5 @@ main = do
     args <- getArgs
     runScopeT $ do
         tabs <- mapM loadFile args
-        repl (concat tabs)
+        exit
+--        repl (concat tabs)

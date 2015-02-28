@@ -370,6 +370,19 @@ typeCheckKeyword ctx pos "squeeze" as Nothing =
             (r2, _, tab2) <- typeCheckCtx' ctx a2 (Just intType)
             return (Apply squeeze [r1,r2], intType, tab1 ++ tab2)
         _ -> throwError [argsErrorMsg pos "squeeze _ _"]
+typeCheckKeyword ctx pos "squeeze'" as Nothing =
+    let mkType t = Apply (Semantics (S.Pi Explicit []) $ V.Pi (TypeK NoLevel) $ TypeK NoLevel) [interval, t]
+        squeeze = Semantics (Name Prefix $ Ident "squeeze") Squeeze'
+    in case as of
+        [] -> return (capply squeeze, Type (mkType $ mkType interval) $ TypeK NoLevel, [])
+        [a1] -> do
+            (r1, _, tab) <- typeCheckCtx' ctx a1 (Just intType)
+            return (Apply squeeze [r1], Type (mkType interval) $ TypeK NoLevel, tab)
+        [a1,a2] -> do
+            (r1, _, tab1) <- typeCheckCtx' ctx a1 (Just intType)
+            (r2, _, tab2) <- typeCheckCtx' ctx a2 (Just intType)
+            return (Apply squeeze [r1,r2], intType, tab1 ++ tab2)
+        _ -> throwError [argsErrorMsg pos "squeeze' _ _"]
 typeCheckKeyword ctx pos var ts (Just (Type ty _)) = do
     (te', Type ty' k', _) <- typeCheckKeyword ctx pos var ts Nothing
     tab <- actExpType True ctx (fmap Right ty') ty pos (Just te')

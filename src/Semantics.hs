@@ -55,6 +55,7 @@ isInj At{} = False
 isInj Coe{} = False
 isInj Iso{} = False
 isInj Squeeze{} = False
+isInj Squeeze'{} = False
 isInj Case{} = False
 isInj Conds{} = False
 isInj FieldAcc{} = False

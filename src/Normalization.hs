@@ -68,6 +68,12 @@ nfSemantics mode t@(Semantics _ Squeeze) [t1,t2] = case (nf WHNF t1, nf WHNF t2)
     (_, Apply t@(Semantics _ (ICon ILeft))  _)  -> capply t
     (i, Apply (Semantics _ (ICon IRight)) _)    -> if mode == Step then i else nf mode i
     (t1',t2')                                   -> Apply t $ nfs mode [t1',t2']
+nfSemantics mode t@(Semantics _ Squeeze') [t1,t2] = case (nf WHNF t1, nf WHNF t2) of
+    (Apply t@(Semantics _ (ICon IRight))  _, _)  -> capply t
+    (Apply (Semantics _ (ICon ILeft)) _, j)      -> if mode == Step then j else nf mode j
+    (_, Apply t@(Semantics _ (ICon IRight))  _)  -> capply t
+    (i, Apply (Semantics _ (ICon ILeft)) _)      -> if mode == Step then i else nf mode i
+    (t1',t2')                                    -> Apply t $ nfs mode [t1',t2']
 nfSemantics mode t@(Semantics _ (Case pats)) (term:terms) =
     let (terms1,terms2) = splitAt (length pats) terms
     in case instantiateCaseClauses (zipWith (\pat te -> ([pat], te)) pats terms1) [term] of

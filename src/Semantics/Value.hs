@@ -23,6 +23,7 @@ data Value t
     | Coe
     | Iso
     | Squeeze
+    | Squeeze'
     | Case [Term Int String]
     | Conds Int (Eval t)
     | FieldAcc Int Int Int (Eval t)
@@ -51,6 +52,7 @@ instance Eq (Value t) where
     Coe == Coe = True
     Iso == Iso = True
     Squeeze == Squeeze = True
+    Squeeze' == Squeeze' = True
     Case pats == Case pats' = and (zipWith cmpPats pats pats')
       where
         cmpPats :: Term Int u -> Term Int u' -> Bool
